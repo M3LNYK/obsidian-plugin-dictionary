@@ -1,21 +1,21 @@
 import { Console } from 'console'
-import { Plugin } from 'obsidian'
+import { Editor, MarkdownView, Plugin } from 'obsidian'
 
 export default class DictionaryPlugin extends Plugin {
 	onload(): void {
-		// runs when plugin is run by obsidian
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
 		this.addCommand({
 			id: "add-word-to-dictionary",
 			name: "Add word to dictionary",
 			hotkeys: [{ modifiers: ["Ctrl", "Shift"], key: "/" }],
-			callback: () => {
-				const activeLeaf = this.app.workspace.activeLeaf;
-				if (activeLeaf) {
-					const editor = activeLeaf.view.sourceMode.cmEditor;
-					const selectedText = editor.getSelection();
-					console.log('Highlighted Word:', selectedText);
+			editorCallback: (editor: Editor) => {
+				const selection = editor.getSelection();
+				if (editor.somethingSelected()) {
+					console.log('Added to dictionary:', selection);
+					console.log('Type:', typeof selection);
 				}
 			}
-		})
+		});
 	}
 }
